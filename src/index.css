@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom styles for professional mystery atmosphere */
+body {
+  background-color: #050506;
+  color: #f3f4f6;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+/* Custom dark scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050506;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #18181b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c54242;
+}
+
+/* Custom neon glowing animations and states */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(197, 66, 66, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(197, 66, 66, 0.4);
+  }
+}
+
+.glow-crimson {
+  animation: pulseGlow 3s infinite;
+  border-color: rgba(197, 66, 66, 0.4);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #c5c6c7 50%, #c54242 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+

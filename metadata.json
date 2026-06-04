@@ -1,0 +1,6 @@
+{
+  "name": "MysteryTube Analyzer",
+  "description": "Plataforma completa de análise, monitoramento e criação para canais do YouTube com foco em mistério.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
