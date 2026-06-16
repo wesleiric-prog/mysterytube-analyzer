@@ -4,6 +4,7 @@
   "description": "<div align=\"center\"> <img width=\"1200\" height=\"475\" alt=\"GHBanner\" src=\"https://ai.google.dev/static/site-assets/images/share-ais-513315318.png\" /> </div>",
   "main": "index.js",
   "dependencies": {
+    "@google/genai": "^2.8.0",
     "abbrev": "^4.0.0",
     "accepts": "^1.3.8",
     "acorn": "^8.16.0",
@@ -298,12 +299,12 @@
     "sqlite3": "^6.0.1",
     "statuses": "^2.0.2",
     "stop-iteration-iterator": "^1.1.0",
+    "string_decoder": "^1.3.0",
     "string.prototype.matchall": "^4.0.12",
     "string.prototype.repeat": "^1.0.0",
     "string.prototype.trim": "^1.2.11",
     "string.prototype.trimend": "^1.0.10",
     "string.prototype.trimstart": "^1.0.8",
-    "string_decoder": "^1.3.0",
     "strip-json-comments": "^2.0.1",
     "supports-preserve-symlinks-flag": "^1.0.0",
     "tailwindcss": "^4.3.0",
@@ -349,15 +350,15 @@
     "zod": "^4.4.3",
     "zod-validation-error": "^4.0.2"
   },
-"scripts": {
-  "dev": "tsx server.ts",
-  "start": "tsx server.ts",
-  "capcut": "tsx generateCapcutPack.ts",
-  "test": "echo \"No tests configured yet\"",
-  "auto:capcut": "cd backend && tsx generateFromTopVideo.ts && tsx buildVideoSceneMap.ts && tsx copyClipsToCapcutPack.ts"
-},
-"keywords": [],
-"author": "",
-"license": "ISC",
-"type": "commonjs"
+  "scripts": {
+    "dev": "tsx server.ts",
+    "start": "tsx server.ts",
+    "capcut": "tsx generateCapcutPack.ts",
+    "test": "echo \"No tests configured yet\"",
+    "auto:capcut": "cd backend && tsx generateFromTopVideo.ts && tsx buildVideoSceneMap.ts && tsx copyClipsToCapcutPack.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }
