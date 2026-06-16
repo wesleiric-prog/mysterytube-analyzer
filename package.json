@@ -190,7 +190,6 @@
     "keyv": "^4.5.4",
     "levn": "^0.4.1",
     "lightningcss": "^1.32.0",
-    "lightningcss-win32-x64-msvc": "^1.32.0",
     "locate-path": "^6.0.0",
     "long": "^5.3.2",
     "loose-envify": "^1.4.0",
