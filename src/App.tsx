@@ -481,7 +481,7 @@ const handleGeneratePackFromVideo = async (video: Video) => {
   onClick={(e) => {
     e.stopPropagation();
     handleGeneratePackFromVideo(vid);
-console.log("BOTÃO CLICADO", video.title);q
+console.log("BOTÃO CLICADO", vid.title);
 alert("BOTÃO CLICADO");
 
   }}
@@ -600,7 +600,7 @@ alert("BOTÃO CLICADO");
                     <span className="p-1 rounded bg-emerald-500/10 text-emerald-400">
                       <TrendingUp className="w-4 h-4" />
                     </span>
-<div className="mb-6 rounded-2xl border border-red-500/20 bg-zinc-900/60 p-5">
+<div className="mb-8 rounded-3xl border border-red-500/30 bg-zinc-900/80 p-8 shadow-2xl">
   <h3 className="text-sm font-bold text-white mb-3">🎬 Gerador de Projeto Completo</h3>
 
   <div className="flex gap-2 mb-4">
@@ -621,7 +621,12 @@ alert("BOTÃO CLICADO");
     onClick={handleGenerateStoryOptions}
     className="px-4 py-2 rounded-lg bg-amber-600 text-white text-xs font-bold mb-4"
   >
-    Gerar 3 Ideias
+<button
+  className="mb-4 w-full rounded-xl bg-red-600 py-4 text-sm font-bold text-white shadow-lg hover:bg-red-700"
+>
+  🚀 GERAR CANAL DARK COMPLETO
+</button>
+Gerar 3 Ideias
   </button>
 
   <div className="space-y-2">
@@ -643,6 +648,21 @@ alert("BOTÃO CLICADO");
     className="mt-4 px-4 py-2 rounded-lg bg-red-600 text-white text-xs font-bold"
   >
     🎬 Gerar Projeto Completo em Português
+<div className="mt-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+  <h3 className="text-sm font-bold text-emerald-300 mb-3">
+    📊 Status do Projeto
+  </h3>
+
+  <div className="space-y-2 text-xs">
+    <div>✅ Backend Online</div>
+    <div>✅ Banco SQLite</div>
+    <div>✅ Ideias</div>
+    <div>⏳ Roteiro</div>
+    <div>⏳ Narração</div>
+    <div>⏳ Vídeos</div>
+    <div>❌ CapCut Pack</div>
+  </div>
+</div>
   </button>
 </div>
                     <h3 className="text-sm font-bold font-display uppercase tracking-wider text-white">Líderes Virais Globais</h3>

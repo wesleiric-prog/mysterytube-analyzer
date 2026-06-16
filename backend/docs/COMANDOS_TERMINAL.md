@@ -41,4 +41,8 @@ s\Eduardo\Desktop\sons\mysterytube-analyzer\backend>
 
   Users\Eduardo\Desktop\sons\mysterytube-analyzerC:\         
 
-  C:\Users\Eduardo\Desktop\sons\mysterytube-analyzer\backend>    d        
+  C:\Users\Eduardo\Desktop\sons\mysterytube-analyzer\backend>
+
+      npm start   
+
+               cd ..                                           
