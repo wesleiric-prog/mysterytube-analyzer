@@ -45,3 +45,34 @@ Thumbs.db
 .env.local
 node_modules
 
+node_modules/
+output/
+.env
+.env.*
+!.env.example
+
+*.db
+*.zip
+
+.vscode/
+dist/
+build/
+coverage/
+
+*.log
+.cache/
+Thumbs.db
+.DS_Store
+
+
+# Videos e audios gerados
+backend/videos/
+backend/**/*.mp4
+backend/**/*.wav
+backend/**/*.mp3
+backend/**/*.json
+
+# Saidas e backups
+output/
+*.db
+*.zip

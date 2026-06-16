@@ -890,65 +890,7 @@ app.delete("/api/scripts/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-app.post("/api/story-options", async (req, res) => {
-  const { category } = req.body;
 
-  exec(
-    `cd backend && npx tsx generateStoryOptions.ts ${category || "misterio"}`,
-    (error, stdout, stderr) => {
-      if (error) {
-        return res.status(500).json({
-          success: false,
-          error: stderr || error.message
-        });
-      }
-
-      try {
-        const filePath = path.join(
-          process.cwd(),
-          "backend",
-          "output",
-          "story-options.json"
-        );
-
-        const options = JSON.parse(
-          fs.readFileSync(filePath, "utf8")
-        );
-
-        res.json({
-          success: true,
-          options
-        });
-      } catch (err: any) {
-        res.status(500).json({
-          success: false,
-          error: err.message
-        });
-      }
-    }
-  );
-});
-
-app.post("/api/generate-selected-project", async (req, res) => {
-  const { ideaId } = req.body;
-
-  exec(
- `cd backend && npx tsx generateEnglishVideoBase.ts ${ideaId || 1} && npx tsx generateSceneKeywords.ts && npx tsx downloadSceneKeywordVideos.ts && npx tsx generateSyncedSceneMap.ts && npx tsx copyClipsToCapcutPack.ts`, 
-    (error, stdout, stderr) => {
-      if (error) {
-        return res.status(500).json({
-          success: false,
-          error: stderr || error.message
-        });
-      }
-
-      res.json({
-        success: true,
-        output: "backend/output/capcut-pack"
-      });
-    }
-  );
-});
 app.post("/api/generate-pack", async (req, res) => {
   const { title } = req.body;
 

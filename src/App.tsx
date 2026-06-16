@@ -34,6 +34,9 @@ export default function App() {
   
   // Scriptwriter prefilled states
   const [scriptPrefill, setScriptPrefill] = useState({ title: '', concept: '' });
+const [storyCategory, setStoryCategory] = useState<'misterio' | 'terror' | 'suspense'>('misterio');
+const [storyOptions, setStoryOptions] = useState<any[]>([]);
+const [selectedStoryId, setSelectedStoryId] = useState<number | null>(null);
 
   // Data states
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -50,6 +53,11 @@ export default function App() {
 
   // UX states
   const [selectedVideoForAnalysis, setSelectedVideoForAnalysis] = useState<Video | null>(null);
+const [lastGeneratedProject, setLastGeneratedProject] = useState<{
+  title: string;
+  output: string;
+  createdAt: string;
+} | null>(null);
   const [isLoadingChannels, setIsLoadingChannels] = useState(false);
   const [activeDetailTab, setActiveDetailTab] = useState<'videos' | 'ideas'>('videos');
   const [isRefreshingStats, setIsRefreshingStats] = useState(false);
@@ -181,7 +189,88 @@ export default function App() {
     setCurrentView('scriptwriter');
     setSelectedChannelId(null);
   };
+const handleGenerateStoryOptions = async () => {
+  try {
+    alert('🎬 Gerando 3 ideias...');
 
+    const res = await fetch('/api/story-options', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: storyCategory })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Erro ao gerar ideias');
+    }
+
+    setStoryOptions(data.options || []);
+    setSelectedStoryId(data.options?.[0]?.id || null);
+
+    alert('✅ 3 ideias geradas!');
+  } catch (err: any) {
+    alert(`❌ Erro ao gerar ideias:\n\n${err.message}`);
+  }
+};
+
+const handleGenerateSelectedProject = async () => {
+  if (!selectedStoryId) {
+    alert('Escolha uma ideia primeiro.');
+    return;
+  }
+
+  try {
+    alert(`🎬 Gerando projeto completo da ideia ${selectedStoryId}...`);
+
+    const res = await fetch('/api/generate-selected-project', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ideaId: selectedStoryId })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Erro ao gerar projeto');
+    }
+
+    setLastGeneratedProject({
+      title: `Ideia ${selectedStoryId}`,
+      output: data.output || 'backend/output/capcut-pack',
+      createdAt: new Date().toLocaleString()
+    });
+
+    alert('✅ Projeto completo criado!');
+  } catch (err: any) {
+    alert(`❌ Erro ao gerar projeto:\n\n${err.message}`);
+  }
+};
+const handleGeneratePackFromVideo = async (video: Video) => {
+  try {
+    alert(`🎬 Gerando pacote CapCut para:\n\n${video.title}`);
+
+    const res = await fetch('/api/generate-pack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: video.title })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Erro ao gerar pacote');
+    }
+
+   setLastGeneratedProject({
+  title: video.title,
+  output: data.output || 'backend/output/capcut-pack',
+  createdAt: new Date().toLocaleString()
+}); alert(`✅ Pacote CapCut criado!\n\n${video.title}`);
+  } catch (err: any) {
+    alert(`❌ Erro ao gerar pacote:\n\n${err.message}`);
+  }
+};
   const getViralBadgeColor = (score: number) => {
     if (score >= 200) return 'bg-rose-500/10 text-rose-500 border border-rose-500/25 font-bold animate-pulse';
     if (score >= 110) return 'bg-red-500/10 text-red-400 border border-red-500/25 font-semibold';
@@ -384,6 +473,22 @@ export default function App() {
                               <p className="text-xs font-bold text-white leading-normal line-clamp-2 h-9 group-hover:text-red-400 transition-colors">
                                 {vid.title}
                               </p>
+<p className="text-xs font-bold text-white leading-relaxed hover:text-red-400 transition-colors">
+  {vid.title}
+</p>
+
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+    handleGeneratePackFromVideo(vid);
+console.log("BOTÃO CLICADO", video.title);q
+alert("BOTÃO CLICADO");
+
+  }}
+  className="mt-2 w-fit rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-[10px] font-bold uppercase text-red-300 hover:bg-red-500/20"
+>
+  🎬 Gerar Pack
+</button>
                               <div className="flex items-center justify-between text-[11px] text-gray-500 font-mono mt-2">
                                 <span>{formatViews(vid.view_count)} visualizações</span>
                                 <span>{vid.published_at}</span>
@@ -495,11 +600,63 @@ export default function App() {
                     <span className="p-1 rounded bg-emerald-500/10 text-emerald-400">
                       <TrendingUp className="w-4 h-4" />
                     </span>
+<div className="mb-6 rounded-2xl border border-red-500/20 bg-zinc-900/60 p-5">
+  <h3 className="text-sm font-bold text-white mb-3">🎬 Gerador de Projeto Completo</h3>
+
+  <div className="flex gap-2 mb-4">
+    {['misterio', 'terror', 'suspense'].map((cat) => (
+      <button
+        key={cat}
+        onClick={() => setStoryCategory(cat as any)}
+        className={`px-3 py-2 rounded-lg text-xs font-bold uppercase ${
+          storyCategory === cat ? 'bg-red-600 text-white' : 'bg-zinc-800 text-gray-300'
+        }`}
+      >
+        {cat}
+      </button>
+    ))}
+  </div>
+
+  <button
+    onClick={handleGenerateStoryOptions}
+    className="px-4 py-2 rounded-lg bg-amber-600 text-white text-xs font-bold mb-4"
+  >
+    Gerar 3 Ideias
+  </button>
+
+  <div className="space-y-2">
+    {storyOptions.map((idea) => (
+      <button
+        key={idea.id}
+        onClick={() => setSelectedStoryId(idea.id)}
+        className={`block w-full text-left p-3 rounded-lg text-xs ${
+          selectedStoryId === idea.id ? 'bg-emerald-600 text-white' : 'bg-zinc-800 text-gray-300'
+        }`}
+      >
+        {idea.id}. {idea.title}
+      </button>
+    ))}
+  </div>
+
+  <button
+    onClick={handleGenerateSelectedProject}
+    className="mt-4 px-4 py-2 rounded-lg bg-red-600 text-white text-xs font-bold"
+  >
+    🎬 Gerar Projeto Completo em Português
+  </button>
+</div>
                     <h3 className="text-sm font-bold font-display uppercase tracking-wider text-white">Líderes Virais Globais</h3>
                   </div>
                   <span className="text-[10px] font-mono text-gray-500">Atualizado dinamicamente</span>
                 </div>
-
+{lastGeneratedProject && (
+  <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 shadow-xl">
+    <h3 className="text-sm font-bold text-emerald-300">📦 Último Projeto Gerado</h3>
+    <p className="mt-2 text-xs text-white font-semibold">{lastGeneratedProject.title}</p>
+    <p className="mt-1 text-[11px] text-emerald-200">Criado em: {lastGeneratedProject.createdAt}</p>
+    <p className="mt-1 text-[11px] text-gray-400">Pasta: {lastGeneratedProject.output}</p>
+  </div>
+)}
                 {globalVideosFeed.length === 0 ? (
                   <div className="p-16 text-center rounded-2xl border border-dashed border-white/5 bg-zinc-900/10">
                     <Info className="w-8 h-8 text-gray-600 mx-auto" />
