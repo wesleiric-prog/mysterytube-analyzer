@@ -1,45 +1,29 @@
 import fs from "fs";
 import path from "path";
-import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 
 function extractJsonArray(text: string) {
   const start = text.indexOf("[");
   const end = text.lastIndexOf("]");
-
-  if (start === -1 || end === -1) {
-    throw new Error("A IA não retornou uma lista JSON válida.");
-  }
-
+  if (start === -1 || end === -1) throw new Error("A IA não retornou JSON válido.");
   return text.slice(start, end + 1);
 }
 
 async function main() {
   const category = process.argv[2] || "misterio";
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
-  if (!apiKey) {
-    throw new Error("GEMINI_API_KEY não encontrada.");
-  }
+  if (!apiKey) throw new Error("GROQ_API_KEY não encontrada.");
 
-  const ai = new GoogleGenAI({ apiKey });
+  const groq = new Groq({ apiKey });
 
   const prompt = `
 Responda SOMENTE com JSON válido.
-Não escreva explicações.
-Não use markdown.
-Não use crases.
-
-Gere exatamente 3 ideias virais de vídeos para YouTube.
-
+Gere exatamente 3 ideias virais para canal dark no YouTube.
 Categoria: ${category}
-Idioma: Português do Brasil
+Idioma: Português do Brasil.
 
-Regras:
-- Use português brasileiro natural e correto
-- Os títulos devem parecer vídeos reais de canal dark brasileiro
-- Foque em mistério, terror psicológico, investigação e suspense
-
-Formato exato:
+Formato:
 [
   { "id": 1, "title": "Título da ideia 1" },
   { "id": 2, "title": "Título da ideia 2" },
@@ -47,14 +31,14 @@ Formato exato:
 ]
 `;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: prompt
+  const completion = await groq.chat.completions.create({
+    model: "llama-3.1-8b-instant",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.8
   });
 
-  const text = response.text || "";
-  const cleanJson = extractJsonArray(text);
-  const parsed = JSON.parse(cleanJson);
+  const text = completion.choices[0]?.message?.content || "";
+  const parsed = JSON.parse(extractJsonArray(text));
 
   const outputDir = path.join(process.cwd(), "output");
   fs.mkdirSync(outputDir, { recursive: true });
@@ -65,8 +49,7 @@ Formato exato:
     "utf8"
   );
 
-  console.log("✅ 3 ideias geradas com Gemini");
-  console.log("📄 output/story-options.json");
+  console.log("✅ 3 ideias geradas com Groq");
 }
 
 main();
