@@ -1,18 +1,40 @@
 import fs from "fs";
-import { askOllama } from "./ollama";
+import path from "path";
+import Groq from "groq-sdk";
 import { textToSpeech } from "./tts";
+
+async function askGroq(prompt: string) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) throw new Error("GROQ_API_KEY não encontrada.");
+
+  const groq = new Groq({ apiKey });
+
+  const completion = await groq.chat.completions.create({
+    model: "llama-3.1-8b-instant",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.75,
+    max_tokens: 900
+  });
+
+  return completion.choices[0]?.message?.content || "";
+}
 
 async function main() {
   const selectedId = Number(process.argv[2] || 1);
 
-  const ideas = JSON.parse(
-    fs.readFileSync("./output/story-options.json", "utf8")
-  );
+  const outputDir = path.join(process.cwd(), "output");
+  fs.mkdirSync(outputDir, { recursive: true });
 
-  const idea =
-    ideas.find((item: any) => item.id === selectedId) || ideas[0];
+  const ideasPath = path.join(outputDir, "story-options.json");
 
-  console.log("🎬 Gerando roteiro em português por blocos:");
+  if (!fs.existsSync(ideasPath)) {
+    throw new Error(`Arquivo de ideias não encontrado: ${ideasPath}`);
+  }
+
+  const ideas = JSON.parse(fs.readFileSync(ideasPath, "utf8"));
+  const idea = ideas.find((item: any) => item.id === selectedId) || ideas[0];
+
+  console.log("🎬 Gerando roteiro em português com Groq:");
   console.log(idea.title);
 
   const blocks = [
@@ -50,12 +72,12 @@ ${blocks[i]}
 Crie texto longo, detalhado, cinematográfico e contínuo.
 `;
 
-  const part = await askOllama(prompt, 650); 
+    const part = await askGroq(prompt);
 
     fullScript += "\n\n" + part.trim();
 
     fs.writeFileSync(
-      "./output/script.txt",
+      path.join(outputDir, "script.txt"),
       fullScript.trim(),
       "utf8"
     );
@@ -67,9 +89,7 @@ Crie texto longo, detalhado, cinematográfico e contínuo.
 
   try {
     console.log("🔊 Gerando áudio...");
-
     await textToSpeech(fullScript);
-
     console.log("✅ Áudio salvo em output/audio.mp3");
   } catch (err: any) {
     console.log("⚠️ Falha ao gerar áudio");
